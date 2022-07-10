@@ -1,1 +1,3 @@
 環境構築：https://zenn.dev/hrs/articles/go-gin-air-docker
+mod神サイト：https://qiita.com/fetaro/items/31b02b940ce9ec579baf
+db:https://zenn.dev/ajapa/articles/443c396a2c5dd1

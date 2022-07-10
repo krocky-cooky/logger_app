@@ -10,3 +10,36 @@ services:
     volumes:
      - ./src/:/go/src
     tty: true
+    env_file: ./mysql/.env
+    depends_on:
+      - db
+    networks:
+      - golang_test_network
+  
+  db:
+    container_name: db
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile 
+    tty: true
+    platform: linux/x86_64
+    ports:
+      - 3306:3306
+    env_file:
+      - ./mysql/.env
+    
+    volumes:
+      - type: volume
+        source: mysql_test_volume
+        target: /var/lib/mysql
+      
+    networks:
+      - golang_test_network
+
+volumes:
+  mysql_test_volume:
+    name: mysql_test_volume
+
+networks:
+  golang_test_network:
+    external: true
