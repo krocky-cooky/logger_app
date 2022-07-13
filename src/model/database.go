@@ -38,20 +38,11 @@ func DbInit() {
 		panic(err)
 	}
 	defer db_ret.Close()
-	db.Migrator().CreateTable(&User{})
+	
+	db.AutoMigrate(&User{},&Log{},&LogData{})
 }
 
-func GetUser(username string) User {
-	db := gormConnect()
-	db_ret, err := db.DB()
-	if err != nil {
-		panic(err)
-	}
-	defer db_ret.Close()
 
-	var user User
-	db.First(&user, "username = ?",username)
-	return user
-}
+
 
 

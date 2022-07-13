@@ -13,11 +13,16 @@ func GetRouter() *gin.Engine {
 	model.SessionSetup(r)
 	r.LoadHTMLGlob("view/*.html")
 
+	//login
 	r.GET("/login",LoginGet)
 	r.POST("/login",LoginPost)
 
+
+	//signup
 	r.GET("/signup",SignUpGet)
 	r.POST("/signup",SignUpPost)
+
+	r.GET("/logout",LogoutGet)
 
 	r_in := r.Group("app/")
 	{
@@ -26,14 +31,21 @@ func GetRouter() *gin.Engine {
 		//root
 		r_in.GET("/",IndexPageGet)
 
-		//signup
-		
-		
-		//login 
+		r_in.GET("/create",LogCreateGet)
+		r_in.POST("/create",LogCreatePost)
+
+		r_in.GET("/view/:logid",LogViewGet)
+
 		
 
 	}
+
+	r_api := r.Group("api/")
+	{
+		r_api.POST("/:username/:logid/:strid",LogRegisterPost)
+	}
 	
+
 
 
 	return r

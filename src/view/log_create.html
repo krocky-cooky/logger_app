@@ -1,0 +1,12 @@
+<div class="input">
+    <p>{{.err}}</p>
+    {{range .logs}}
+    <div>
+      <a href="http://localhost:3000/app/view/{{.ID}}">{{.Logname}}</a>
+    </div>
+    {{end}}
+    <form action="" method="post">
+      <p>新ログ名 :<input type="text" name="logname" placeholder=""/></p>
+      <p><input type="submit" value="登録" /></p>
+    </form>
+  </div>

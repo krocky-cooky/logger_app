@@ -23,6 +23,19 @@ func CreateUser(username string, password string) error {
 	if result := db.Create(&User{Username: username, Password: passwordEncrypt}); result.Error != nil {
 		return result.Error
 	}
-
+	
 	return nil
+}
+
+func GetUser(username string) (User ,error) {
+	db := gormConnect()
+	db_ret, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer db_ret.Close()
+
+	var user User
+	err = db.First(&user, "username = ?",username).Error
+	return user, err
 }

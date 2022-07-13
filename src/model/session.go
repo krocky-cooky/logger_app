@@ -5,6 +5,8 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 
+	
+
 	"fmt"
 )
 
@@ -20,16 +22,17 @@ func SessionSetup(r *gin.Engine) {
 func SessionCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		username := session.Get("username")
+		username := session.Get("username").(string)
+		_, err := GetUser(username)
 
-		if username == nil {
-			fmt.Print("not logged in")
+		if err != nil {
+			fmt.Print("not logged in\n")
 			c.Redirect(302,"/login")
 			c.Abort()
 		} else {
 			c.Set("username",username)
 			c.Next()
-			fmt.Print("logged in")
+			fmt.Print("logged in\n")
 		}
 	}
 }
