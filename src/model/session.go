@@ -22,7 +22,14 @@ func SessionSetup(r *gin.Engine) {
 func SessionCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		username := session.Get("username").(string)
+		usernamesession := session.Get("username")
+		if usernamesession == nil {
+			fmt.Print("not logged in\n")
+			c.Redirect(302,"/login")
+			c.Abort()
+			return 
+		}
+		username := usernamesession.(string)
 		_, err := GetUser(username)
 
 		if err != nil {

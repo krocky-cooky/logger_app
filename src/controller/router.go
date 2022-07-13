@@ -12,10 +12,15 @@ func GetRouter() *gin.Engine {
 	r := gin.Default()
 	model.SessionSetup(r)
 	r.LoadHTMLGlob("view/*.html")
+	r.Static("/css","./view/css")
+	r.Static("/js","./view/js")
+
 
 	//login
 	r.GET("/login",LoginGet)
 	r.POST("/login",LoginPost)
+
+	
 
 
 	//signup

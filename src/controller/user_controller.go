@@ -12,20 +12,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+
 func IndexPageGet(c *gin.Context) {
-	c.HTML(200,"index.html",gin.H{})
+	c.HTML(200,"index.html",gin.H{
+		"base": model.GetBaseTemplateData(c),
+	})
 }
 
 
 func SignUpGet(c *gin.Context) {
-	c.HTML(200,"signup.html",gin.H{})
+	c.HTML(200,"signup.html",gin.H{
+		"base": model.GetBaseTemplateData(c),
+	})
 }
 
 func SignUpPost(c *gin.Context) {
 	var form model.User
 
 	if err := c.Bind(&form); err != nil {
-		c.HTML(http.StatusBadRequest, "signup.html",gin.H{"err":err})
+		c.HTML(http.StatusBadRequest, "signup.html",gin.H{
+			"err":err,
+			"base": model.GetBaseTemplateData(c),
+		})
 		c.Abort()
 
 	}else {
@@ -33,14 +42,19 @@ func SignUpPost(c *gin.Context) {
 		password := c.PostForm("password")
 
 		if err := model.CreateUser(username,password);err != nil {
-			c.HTML(http.StatusBadRequest,"signup.html",gin.H{"err":err})
+			c.HTML(http.StatusBadRequest,"signup.html",gin.H{
+				"err":err,
+				"base": model.GetBaseTemplateData(c),
+	})
 		}
 		c.Redirect(302,"/app/create")
 	}
 }
 
 func LoginGet(c *gin.Context) {
-	c.HTML(200,"login.html",gin.H{})
+	c.HTML(200,"login.html",gin.H{
+		"base": model.GetBaseTemplateData(c),
+	})
 } 
 
 func LoginPost(c *gin.Context) {
@@ -48,7 +62,10 @@ func LoginPost(c *gin.Context) {
 	user, err := model.GetUser(username);
 	if  err != nil {
 		fmt.Print("login failed\n")
-		c.HTML(http.StatusBadRequest, "login.html", gin.H{"err": err})
+		c.HTML(http.StatusBadRequest, "login.html", gin.H{
+			"err": err,
+			"base": model.GetBaseTemplateData(c),
+		})
 		c.Abort()
 	}
 	dbPass := user.Password 
@@ -56,7 +73,10 @@ func LoginPost(c *gin.Context) {
 
 	if err := crypto.CompareHashAndPassword(dbPass, formPass); err != nil {
 		fmt.Print("login failed\n")
-		c.HTML(http.StatusBadRequest, "login.html", gin.H{"err": err})
+		c.HTML(http.StatusBadRequest, "login.html", gin.H{
+			"err": err,
+			"base": model.GetBaseTemplateData(c),
+		})
 		c.Abort()
 	} else {
 		fmt.Print("successfully logined")
@@ -72,12 +92,19 @@ func LogoutGet(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()
-	c.Redirect(302,"/")
+	c.Redirect(302,"/login")
 }
 
 func LogCreateGet(c *gin.Context) {
 	session := sessions.Default(c)
-	username := session.Get("username").(string)
+	usernamesession := session.Get("username")
+	if usernamesession == nil {
+		fmt.Print("not logged in\n")
+		c.Redirect(302,"/login")
+		c.Abort()
+		return 
+	}
+	username := usernamesession.(string)
 	logs, _ := model.GetLogs(username)
 	/*
 	var lognames []string
@@ -87,6 +114,7 @@ func LogCreateGet(c *gin.Context) {
 	*/
 	c.HTML(200,"log_create.html",gin.H{
 		"logs": logs,
+		"base": model.GetBaseTemplateData(c),
 	})
 }
 
@@ -98,7 +126,9 @@ func LogCreatePost(c *gin.Context) {
 	err := model.CreateLog(logname,username)
 	if err != nil {
 		fmt.Print("fail registering\n")
-		c.HTML(http.StatusBadRequest, "log_create.html",gin.H{})
+		c.HTML(http.StatusBadRequest, "log_create.html",gin.H{
+			"base": model.GetBaseTemplateData(c),
+		})
 	} else {
 		fmt.Print("successfully registered\n")
 		c.Redirect(302,"/app/create")
@@ -132,6 +162,7 @@ func LogViewGet(c *gin.Context) {
 
 	
 	c.HTML(200,"log_view.html",gin.H{
+		"base": model.GetBaseTemplateData(c),
 		"logdatas": logdatas,
 		"guid": guid,
 		"username": username,
