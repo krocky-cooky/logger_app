@@ -39,3 +39,15 @@ func GetUser(username string) (User ,error) {
 	err = db.First(&user, "username = ?",username).Error
 	return user, err
 }
+
+func GetAllUser() ([]User, error) {
+	db := gormConnect()
+	db_ret, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer db_ret.Close()
+	var users []User
+	err = db.Find(&users).Error
+	return users, err 
+}

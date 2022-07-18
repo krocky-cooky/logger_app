@@ -22,8 +22,10 @@ func IndexPageGet(c *gin.Context) {
 
 
 func SignUpGet(c *gin.Context) {
+	users, _ := model.GetAllUser()
 	c.HTML(200,"signup.html",gin.H{
 		"base": model.GetBaseTemplateData(c),
+		"users": users,
 	})
 }
 
@@ -123,7 +125,19 @@ func LogCreatePost(c *gin.Context) {
 	username:= session.Get("username").(string)
 	
 	logname := c.PostForm("logname")
-	err := model.CreateLog(logname,username)
+	i := 0
+	varNames []string
+	varTypes []int
+	for i++ {
+		name := c.PostForm("variable_" + strconv.Itoa(i))
+		typeid := c.PostForm("type_" + strconv.Itoa(i))
+		if name == nil || typeid == nil{
+			break
+		}
+		varNames = append(varNames, name)
+		varTypes = append(varTypes,typeid)
+	}
+	err := model.CreateLog(logname,username,varNames,varTypes)
 	if err != nil {
 		fmt.Print("fail registering\n")
 		c.HTML(http.StatusBadRequest, "log_create.html",gin.H{

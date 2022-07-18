@@ -39,7 +39,7 @@ func DbInit() {
 	}
 	defer db_ret.Close()
 	
-	db.AutoMigrate(&User{},&Log{},&LogData{})
+	db.AutoMigrate(&User{},&Log{},&Variable{}, &LogData{})
 }
 
 
