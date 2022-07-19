@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/krocky-cooky/logger_app/crypto"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -13,7 +13,7 @@ type User struct {
 
 func CreateUser(username string, password string) error {
 	passwordEncrypt, _ := crypto.PasswordEncrypt(password)
-	db := gormConnect()
+	db := GormConnect()
 	db_ret, err := db.DB()
 	if err != nil {
 		panic(err)
@@ -28,7 +28,7 @@ func CreateUser(username string, password string) error {
 }
 
 func GetUser(username string) (User ,error) {
-	db := gormConnect()
+	db := GormConnect()
 	db_ret, err := db.DB()
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func GetUser(username string) (User ,error) {
 }
 
 func GetAllUser() ([]User, error) {
-	db := gormConnect()
+	db := GormConnect()
 	db_ret, err := db.DB()
 	if err != nil {
 		panic(err)

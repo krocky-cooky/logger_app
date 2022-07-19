@@ -106,8 +106,14 @@ func LogCreateGet(c *gin.Context) {
 		c.Abort()
 		return 
 	}
+	db := model.GormConnect()
+	db_ret, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer db_ret.Close()
 	username := usernamesession.(string)
-	logs, _ := model.GetLogs(username)
+	logs, _ := model.GetLogs(username, db)
 	/*
 	var lognames []string
 	for _, log := range logs {
@@ -125,19 +131,27 @@ func LogCreatePost(c *gin.Context) {
 	username:= session.Get("username").(string)
 	
 	logname := c.PostForm("logname")
-	i := 0
-	varNames []string
-	varTypes []int
-	for i++ {
+	var varNames []string
+	var varTypes []int
+	for i := 0;i < 2; i++ {
 		name := c.PostForm("variable_" + strconv.Itoa(i))
-		typeid := c.PostForm("type_" + strconv.Itoa(i))
-		if name == nil || typeid == nil{
+		typeidstr := c.PostForm("type_" + strconv.Itoa(i))
+		/*
+		if reflect.ValueOf(name).IsNil() || reflect.ValueOf(typeidstr).IsNil(){
 			break
 		}
+		*/
+		typeid, _ := strconv.Atoi(typeidstr)
 		varNames = append(varNames, name)
 		varTypes = append(varTypes,typeid)
 	}
-	err := model.CreateLog(logname,username,varNames,varTypes)
+	db := model.GormConnect()
+	db_ret, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer db_ret.Close()
+	err = model.CreateLog(logname,username,varNames,varTypes, db)
 	if err != nil {
 		fmt.Print("fail registering\n")
 		c.HTML(http.StatusBadRequest, "log_create.html",gin.H{
@@ -154,10 +168,23 @@ func LogRegisterPost(c *gin.Context) {
 	logid64, _ := strconv.ParseUint(c.Param("logid"),10,64)
 	logid := uint(logid64)
 	guid := c.Param("strid")
-	postData := c.PostForm("data")
-	data, _ := strconv.ParseFloat(postData,64)
+	
 	fmt.Print("API requests received\n")
-	err := model.RegisterLog(username,logid,guid,data)
+	
+	db := model.GormConnect()
+	db_ret, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer db_ret.Close()
+	variables, _ := model.GetVariables(logid,db)
+	postdata := map[string]string{} 
+	fmt.Print(len(variables))
+	fmt.Print("\n")
+	for _, variable := range variables {
+		postdata[variable.Name] = c.PostForm(variable.Name)
+	}
+	err = model.RegisterLog(username,logid,guid,postdata,db)
 
 	if err != nil {
 		fmt.Print("fail registering\n")
@@ -167,17 +194,36 @@ func LogRegisterPost(c *gin.Context) {
 func LogViewGet(c *gin.Context) {
 	session := sessions.Default(c)
 	username := session.Get("username").(string)
-
+	
 	logid64, _ := strconv.ParseUint(c.Param("logid"),10,64)
 	logid := uint(logid64)
 	
-	logdatas := model.GetLogDatas(username,logid)
-	guid := model.GetLogGuid(username,logid)
+	db := model.GormConnect()
+	db_ret, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer db_ret.Close()
+	log, _ := model.GetLog(logid, db)
+
+	mapVariables := map[string][]string{}
+
+	for _, dataset := range log.LogDataSets {
+		logDataValues, _ := model.GetLogDataValues(dataset.ID,db)
+
+		for _, logDataValue := range logDataValues {
+			fmt.Print(logDataValue.Data)
+			variable, _ := model.GetVariable(logDataValue.VariableID,db)
+			mapVariables[variable.Name] = append(mapVariables[variable.Name],logDataValue.Data)
+		}
+	}
+
+	guid := model.GetLogGuid(username,logid,db)
 
 	
 	c.HTML(200,"log_view.html",gin.H{
 		"base": model.GetBaseTemplateData(c),
-		"logdatas": logdatas,
+		"logdatas": mapVariables,
 		"guid": guid,
 		"username": username,
 		"logid": logid,

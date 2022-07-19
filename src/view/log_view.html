@@ -3,7 +3,11 @@
 <div>
     <a href="/app/create">ログ作成 & ログ一覧へ</a>
     <h2>http://localhost:3000/api/{{.username}}/{{.logid}}/{{.guid}}<h2>
-    {{range .logdatas}}
-    <h2>{{.Data}}</h2>
+    {{range $key, $value := .logdatas}}
+
+    <h2>{{ $key }}</h2>
+    {{range $value}}
+    <h4>{{.}}</h4>
+    {{end}}
     {{end}}
 </div>

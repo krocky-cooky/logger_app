@@ -12,7 +12,7 @@ import (
 	_"github.com/joho/godotenv"
 )
 
-func gormConnect() *gorm.DB {
+func GormConnect() *gorm.DB {
 	
 	//DBMS := os.Getenv("MYSQL_DBMS")
 	USER := os.Getenv("MYSQL_USER")
@@ -32,14 +32,14 @@ func gormConnect() *gorm.DB {
 }
 
 func DbInit() {
-	db := gormConnect()
+	db := GormConnect()
 	db_ret, err := db.DB()
 	if err != nil {
 		panic(err)
 	}
 	defer db_ret.Close()
 	
-	db.AutoMigrate(&User{},&Log{},&Variable{}, &LogData{})
+	db.AutoMigrate(&User{},&Log{},&Variable{}, &LogDataSet{}, &LogDataValue{})
 }
 
 
