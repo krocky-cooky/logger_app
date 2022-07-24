@@ -1,13 +1,21 @@
-{{template "header" .base}}
 
-<div>
-    <a href="/app/create">ログ作成 & ログ一覧へ</a>
-    <h2>http://localhost:3000/api/{{.username}}/{{.logid}}/{{.guid}}<h2>
-    {{range $key, $value := .logdatas}}
 
-    <h2>{{ $key }}</h2>
-    {{range $value}}
-    <h4>{{.}}</h4>
-    {{end}}
-    {{end}}
-</div>
+<!DOCTYPE html>
+<html>
+  {{template "header"}}
+  <body>
+    {{template "page_header" .base}}
+    <div>
+        <a href="/app/create">ログ作成 & ログ一覧へ</a>
+        <h2>http://localhost:3000/api/{{.username}}/{{.logid}}/{{.guid}}<h2>
+        {{range $key, $value := .logdatas}}
+    
+        <h2>{{ $key }}</h2>
+        {{range $value}}
+        <h4>{{.}}</h4>
+        {{end}}
+        {{end}}
+    </div>
+  </body>
+
+</html>

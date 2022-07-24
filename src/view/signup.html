@@ -1,15 +1,23 @@
-<div class="input">
-    <p>{{.err}}</p>
-    <a href="/login">log in page</a>
-    <form action="/signup" method="post">
-      <h3 id="username_alert"></h3>
-      <p>ユーザー名 :<input type="text" id ="username_input" name="username" placeholder=""/></p>
-      <p>パスワード :<input type="text" name="password" placeholder=""/></p>
-      <p><input type="submit" value="登録" /></p>
-    </form>
-    {{range .users}}
-    <div class="username">{{.Username}}</div>
-    {{end}}
-  </div>
-  <script type="text/javascript" src="/js/signup.js"></script>
+<!DOCTYPE html>
+<html>
+  {{template "header"}}
+  <body>
+    {{template "page_header" .base}}
+    <div class="input">
+        <p>{{.err}}</p>
+        <a href="/login">log in page</a>
+        <form action="/signup" method="post">
+          <h3 id="username_alert"></h3>
+          <p>ユーザー名 :<input type="text" id ="username_input" name="username" placeholder=""/></p>
+          <p>パスワード :<input type="text" name="password" placeholder=""/></p>
+          <p><input type="submit" value="登録" /></p>
+        </form>
+        {{range .users}}
+        <div class="username">{{.Username}}</div>
+        {{end}}
+      </div>
+      <script type="text/javascript" src="/js/signup.js"></script>
+    </body>
+
+</html>
 

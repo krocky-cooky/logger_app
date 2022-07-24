@@ -1,11 +1,21 @@
-{{template "header" .base}}
 
-<div class="input">
-    <p>{{.err}}</p>
-    <a href="/signup">sign up page</a>
-    <form action="/login" method="post">
-      <p>ユーザー名 :<input type="text" name="username" placeholder=""/></p>
-      <p>パスワード :<input type="text" name="password" placeholder=""/></p>
-      <p><input type="submit" value="ログイン" /></p>
-    </form>
-  </div>
+
+<!DOCTYPE html>
+<html>
+  {{template "header"}}
+  <body>
+    {{template "page_header" .base}}
+    <div class="input">
+      <p>{{.err}}</p>
+      <a href="/signup">sign up page</a>
+      <form action="/login" method="post">
+        <p>ユーザー名 :<input type="text" name="username" placeholder=""/></p>
+        <p>パスワード :<input type="text" name="password" placeholder=""/></p>
+        <p><input type="submit" value="ログイン" /></p>
+      </form>
+    </div>
+  </body>
+
+</html>
+
+

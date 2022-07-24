@@ -132,8 +132,7 @@ func RegisterLog(username string, logid uint, guid string, postdata map[string]s
 		}
 		
 	}
-
-	fmt.Print("log registered !!!!!!")
+	fmt.Print("log registered !!!!!")
 	
 	return nil
 
